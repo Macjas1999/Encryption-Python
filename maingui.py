@@ -82,14 +82,17 @@ def handleNewKeyEncrypt():
 
 def inputFromTextfield():
     label3 = tk.Label(root, text='Enter your message here:',font=('helvetica', 20))
-    buttonSubmit = tk.Button(text='Submit', command=lambda: [displayEncryptedText(), label3.destroy()], bg='blue', fg='white', font=('helvetica', 9, 'bold'))
-    canvas1.create_window(150, 140, window=buttonSubmit)
+    #buttonSubmit = tk.Button(text='Submit', command=lambda: [displayEncryptedText(), label3.destroy()], bg='blue', fg='white', font=('helvetica', 9, 'bold'))
+    #canvas1.create_window(150, 140, window=buttonSubmit)
     canvas1.create_window(385, 70, window=label3)
     entry1 = tk.Text(root, wrap='word', width=60, height=10 ,font=('helvetica', 12)) 
     canvas1.create_window(385, 180, window=entry1)
     msg = entry1.get(index1='1.0')
     mainEncryptionObj.setMessage(msg)
-    entry1.destroy()
+    entry1.config(state=NORMAL)
+    entry1.delete('1.0', END)
+    buttonSubmit = tk.Button(text='Submit', command=lambda: [displayEncryptedText(), label3.destroy()], bg='blue', fg='white', font=('helvetica', 9, 'bold'))
+    canvas1.create_window(150, 70, window=buttonSubmit)
 
 def displayEncryptedText():
     entry1 = tk.Text(root, wrap='word', width=60, height=10 ,font=('helvetica', 12)) 

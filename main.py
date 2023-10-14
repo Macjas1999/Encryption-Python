@@ -1,45 +1,68 @@
 from cryptography.fernet import Fernet
 
 
-class Input:
-    def __init__(self, input) -> None:
-        self.buffer = input
+# class Input:
+#     def __init__(self, input) -> None:
+#         self.buffer = input
 
-    def getLen(self):
-        return len(self.buffer)
+#     def getLen(self):
+#         return len(self.buffer)
     
-    def __del__(self) -> None:
-        return 0
+#     def __del__(self) -> None:
+#         return 0
     
 class Enctrypton:
+    # def __init__(self) -> None:
+    #     self.fernetObj
+
+    #     self.messageAsString
+    #     self.messageAsBytes
+
+    #     self.keyAsBytes
+    #     self.keyAsString
+
+    #     self.encryptedAsBytes
+    #     self.encryptedAsString
+
+    #     self.decryptedAsBytes
+    #     self.decryptedAsString
+
     def setMessage(self, message):
-        self.message = message
+        if isinstance(message, str):
+            self.messageAsString = message
+            self.messageAsBytes = bytes(message, 'utf-8')
+        elif isinstance(message, bytes):
+            self.messageAsBytes = message
+            self.messageAsString = message.decode('utf-8')
 
     def generateKey(self):
-        self.key = Fernet.generate_key()
-        self.fernetObj = Fernet(self.key)
+        self.keyAsBytes = Fernet.generate_key()
+        self.keyAsString = self.keyAsBytes.decode('utf-8')
+        self.fernetObj = Fernet(self.keyAsBytes)
     
     def setKey(self, key):
-        self.key = key
-        self.fernetObj = Fernet(self.key)
+        if isinstance(key, str):
+            self.keyAsString = key
+            self.keyAsBytes = bytes(key, 'utf-8')
+        elif isinstance(key, bytes):
+            self.keyAsBytes = key
+            self.keyAsString = key.decode('utf-8')
+        self.fernetObj = Fernet(self.keyAsBytes)
 
-    def getKey(self):
-        return self.key
-    
-    def getKeyDecoded(self) -> str:
-        return self.key.decode('utf-8')
+    def getKey(self, format):  #format should be either 'b' for bytes or 's' for string
+        match format:
+            case 'b':
+                return self.keyAsBytes
+            case 's':   
+                return self.keyAsString     
 
-    def decodeEncrypted(self) -> str:
-        self.encryptedDecoded = self.encrypted.decode('utf-8')
-        return self.encryptedDecoded
-    
     def encryptCls(self):
-        self.encrypted = self.fernetObj.encrypt(bytes(self.message, 'utf-8'))
-        #return self.encrypted
+        self.encryptedAsBytes = self.fernetObj.encrypt(self.messageAsBytes)
+        self.encryptedAsString = self.encryptedAsBytes.decode('utf-8')
 
     def decryptCls(self):
-        self.decrypted = self.fernetObj.decrypt(self.message)
-        #return self.decrypted
+        self.decryptedAsBytes = self.fernetObj.decrypt(self.messageAsBytes)
+        self.decryptedAsString = self.decryptedAsBytes.decode('utf-8')
 
     def mixUp(self, keyDecoded, messageDecoded) -> str:
         slice1 = keyDecoded[0:11]
@@ -51,8 +74,6 @@ class Enctrypton:
     def unmixUp(self, received):
         key = received[11:22] + received[33:44] + received[55:66] + received[77:88]
         message = received[0:11] + received[22:33] + received[44:55] + received[66:77] + received[88:]
-        key = bytes(key, 'utf-8')
-        message = bytes(message, 'utf-8')
         self.setKey(key)
         self.setMessage(message)
 
@@ -66,41 +87,60 @@ while True:
     match use:
         case "e":
             mainEncryptionObj = Enctrypton()
-            hasKey = input("If you want to generate new key input \'gen\', or if you have key copy it below:\n")
-            if(hasKey == "gen"):
-                mainEncryptionObj.generateKey()
-                print(mainEncryptionObj.getKeyDecoded())
-                print(len(mainEncryptionObj.getKeyDecoded()))
-                inputObj = Input(input("Message: "))
-                mainEncryptionObj.setMessage(inputObj.buffer)
-                mainEncryptionObj.encryptCls()
-                print(mainEncryptionObj.decodeEncrypted())
-                print(len(mainEncryptionObj.decodeEncrypted()))
-                part1 = mainEncryptionObj.getKeyDecoded()
-                part2 = mainEncryptionObj.decodeEncrypted()
-                toSend = mainEncryptionObj.mixUp(part1, part2)
-                print(toSend)
-                mainEncryptionObj.__del__()
+            print('For encryption with separate key press \'s\' if you want to entangle key and message input \'e\'')
+            method = input()
+            match method:
+                case 's':
+                    hasKey = input("If you want to generate new key input \'gen\', or if you have key copy it below:\n")
+                    if(hasKey == "gen"):
+                        mainEncryptionObj.generateKey()
+                        print("Your key is: " + mainEncryptionObj.getKey('s'))
+                        inputObj = input("Message: ")
+                        mainEncryptionObj.setMessage(inputObj)
+                        mainEncryptionObj.encryptCls()
+                        print("Your encrypted message: \n" + mainEncryptionObj.encryptedAsString + "\n")
+                        mainEncryptionObj.__del__()
 
-            elif(len(hasKey) == 44):
-                mainEncryptionObj.setKey(bytes(hasKey, 'utf-8'))
-                print('Key has been set correctly')
-                inputObj = Input(input("Message: "))
-                mainEncryptionObj.setMessage(inputObj.buffer)
-                mainEncryptionObj.encryptCls()
-                print(mainEncryptionObj.decodeEncrypted())
-                #print(len(mainEncryptionObj.decodeEncrypted()))
-                mainEncryptionObj.__del__()
+                    elif(len(hasKey) == 44):
+                        mainEncryptionObj.setKey(hasKey)
+                        print('Key has been set correctly')
+                        inputObj = input("Message: ")
+                        mainEncryptionObj.setMessage(inputObj)
+                        mainEncryptionObj.encryptCls()
+                        print("Your encrypted message: \n" + mainEncryptionObj.encryptedAsString + "\n")
+                        mainEncryptionObj.__del__()
 
-            else:
-                print("Input is incorrect\n")
+                    else:
+                        print("Input is incorrect\n")
+                case 'e':
+                    mainEncryptionObj.generateKey()
+                    inputObj = input("Message: ")
+                    mainEncryptionObj.setMessage(inputObj)
+                    mainEncryptionObj.encryptCls()
+                    entangled = mainEncryptionObj.mixUp(mainEncryptionObj.keyAsString, mainEncryptionObj.encryptedAsString)
+                    print("Your encrypted message: \n" + entangled + "\n")
 
         case "d":
             mainEncryptionObj = Enctrypton()
-            inputObj = Input(input("Message: "))
-            mainEncryptionObj.unmixUp(inputObj.buffer)
-            mainEncryptionObj.decryptCls()
-            print(mainEncryptionObj.decrypted)
+            print('For decryption with separate key press \'s\' if you have one entangeled message input \'e\'')
+            method = input()
+            match method:
+                case 's':
+                    hasKey = input("Enter your key: ")
+                    mainEncryptionObj.setKey(hasKey)
+                    print('Key has been set correctly')
+                    inputObj = input("Message: ")
+                    mainEncryptionObj.setMessage(inputObj)
+                    mainEncryptionObj.decryptCls()
+                    print("Your decrypted message: \n" + mainEncryptionObj.decryptedAsString + "\n")
+                    mainEncryptionObj.__del__()
+
+                case 'e':
+                    inputObj = input("Message: ")
+                    mainEncryptionObj.unmixUp(inputObj)
+                    mainEncryptionObj.decryptCls()
+                    print("Your decrypted message: \n" + mainEncryptionObj.decryptedAsString + "\n")
+                    mainEncryptionObj.__del__()
 
         case "x":
             break

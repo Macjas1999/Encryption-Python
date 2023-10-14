@@ -1,32 +1,15 @@
 from cryptography.fernet import Fernet
-
-
-# class Input:
-#     def __init__(self, input) -> None:
-#         self.buffer = input
-
-#     def getLen(self):
-#         return len(self.buffer)
-    
-#     def __del__(self) -> None:
-#         return 0
-    
+ 
 class Enctrypton:
-    # def __init__(self) -> None:
-    #     self.fernetObj
-
-    #     self.messageAsString
-    #     self.messageAsBytes
-
-    #     self.keyAsBytes
-    #     self.keyAsString
-
-    #     self.encryptedAsBytes
-    #     self.encryptedAsString
-
-    #     self.decryptedAsBytes
-    #     self.decryptedAsString
-
+    #   fernetObj
+    #   messageAsString
+    #   messageAsBytes
+    #   keyAsBytes
+    #   keyAsString
+    #   encryptedAsBytes
+    #   encryptedAsString
+    #   decryptedAsBytes
+    #   decryptedAsString
     def setMessage(self, message):
         if isinstance(message, str):
             self.messageAsString = message
@@ -144,29 +127,3 @@ while True:
 
         case "x":
             break
-
-
-# inputObj = Input(input("Message: "))
-# encryprionObj = Enctrypton(inputObj.buffer)
-# encryprionObj.generateKey()
-# encMessage = encryprionObj.encryptCls()
-# print(encMessage)
-
-# decryptionObj = Enctrypton(encMessage)
-# decryptionObj.setKey(encryprionObj.getKey())
-# decMessage = decryptionObj.decryptCls()
-# print(decMessage)
-
-
-
-# #Testing code. Temporary
-# key = Fernet.generate_key()
-# encObj = Fernet(key)
-
-# input = input("Message: ")
-# input = Input(input)
-
-# encrypted = encObj.encrypt(bytes(input.buffer, 'utf-8'))
-# print(input.getLen())
-# print(encrypted)
-# encObj.decrypt(encrypted)

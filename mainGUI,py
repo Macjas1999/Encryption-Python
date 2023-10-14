@@ -281,8 +281,7 @@ class windowHandling():
         buttonReturn = tk.Button(text='Return to menu', command=lambda: [self.initScreen(), canvasThis.destroy()], bg='blue', fg='white', font=('helvetica', 9, 'bold'))
         canvasThis.create_window(self.returnButtonX, self.returnButtonY, window=buttonReturn)
 
-
-
+#Mainloot
 root= tk.Tk()
 root.title('Cryptography tool')        
 window = windowHandling(root)

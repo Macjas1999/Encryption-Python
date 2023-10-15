@@ -1,0 +1,6 @@
+Version: 1.0
+CompanyName: No comp
+FileDescription: Python app using cryptography module to encrypt text messages
+InternalName: SimpleEncryption
+OriginalFilename: SimpleEncryption.exe
+ProductName: SimpleEncryption

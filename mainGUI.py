@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import *
 import tkinter.messagebox 
 from cryptography.fernet import Fernet
-
+import random
 
 class Enctrypton:
     #   fernetObj
@@ -64,6 +64,54 @@ class Enctrypton:
         message = received[0:11] + received[22:33] + received[44:55] + received[66:77] + received[88:]
         self.setKey(key)
         self.setMessage(message)
+
+    def mixUpRandom(self, keyDecoded, messageDecoded) -> str:
+        # 4 fixed slices 11 chars each
+        slice1 = keyDecoded[0:11]
+        slice2 = keyDecoded[11:22]
+        slice3 = keyDecoded[22:33]
+        slice4 = keyDecoded[33:44]
+
+        msg_len = len(messageDecoded)
+        # Check if message is long enough to insert 4 slices
+        if msg_len < 5:
+            raise ValueError("Message too short for random mix up.")
+
+        self.sliceKey = sorted(random.sample(range(1, msg_len), 4))
+        a, b, c, d = self.sliceKey
+
+        # tangle message
+        return (
+            messageDecoded[0:a] + slice1 +
+            messageDecoded[a:b] + slice2 +
+            messageDecoded[b:c] + slice3 +
+            messageDecoded[c:d] + slice4 +
+            messageDecoded[d:]
+        )
+
+    def unmixUpRandom(self, received, sliceKey) -> str:
+        self.sliceKey = sorted(sliceKey)
+        a, b, c, d = self.sliceKey
+
+        # shifting message to recover key
+        slice1 = received[a:a + 11]
+        slice2 = received[b + 11:b + 22]
+        slice3 = received[c + 22:c + 33]
+        slice4 = received[d + 33:d + 44]
+        key = slice1 + slice2 + slice3 + slice4
+
+        # Rebuild original message by skipping the key slices
+        message = (
+            received[0:a] +
+            received[a + 11:b + 11] +
+            received[b + 22:c + 22] +
+            received[c + 33:d + 33] +
+            received[d + 44:]
+        )
+
+        self.setKey(key)
+        self.setMessage(message)
+
 
     def __del__(self) -> None:
         return 0

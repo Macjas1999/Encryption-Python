@@ -96,20 +96,137 @@ class Enctrypton:
 
     def __del__(self) -> None:
         return 0
+
+        
 ########################################################
 #GUI
 
-class MainWindow:``
+class MainWindow:
 
     def __init__(self, root: tk.Tk) -> None:
         self.root = root
+        self.encryption = Enctrypton()
         self._configure_window()
+        self._build_main_menu()
 
     def _configure_window(self) -> None:
         self.root.title("Cryptography tool")
         self.root.geometry("800x600")
         self.root.minsize(600, 400)
 
+    def _clear_window(self) -> None:
+        # Remove all existing widgets from the root window
+        for widget in self.root.winfo_children():
+            widget.destroy()
+
+    def _create_return_to_main_button(self) -> tk.Button:
+        #helper to retur to the main menu from any view
+        button = tk.Button(
+            self.root,
+            text="Return",
+            width=3,
+            height=2,
+            command=self._build_main_menu,
+        )
+        button.place(x=10, y=10)
+        button.lift()
+        return button
+
+##### Main menu #####
+    def _build_main_menu(self) -> None:
+        self._clear_window()
+
+        frame = tk.Frame(self.root)
+        frame.pack(expand=True)
+
+        title_label = tk.Label(
+            frame,
+            text="Choose an action",
+            font=("Arial", 20, "bold")
+        )
+        title_label.pack(pady=40)
+
+        encrypt_button = tk.Button(
+            frame,
+            text="Encrypt",
+            width=20,
+            height=2,
+            command=self._show_encrypt_view
+        )
+        encrypt_button.pack(pady=10)
+
+        decrypt_button = tk.Button(
+            frame,
+            text="Decrypt",
+            width=20,
+            height=2,
+            command=self._show_decrypt_view
+        )
+        decrypt_button.pack(pady=10)
+########## Encrypt view #####
+    def _show_encrypt_view(self) -> None:
+        self._clear_window()
+
+        frame = tk.Frame(self.root)
+        frame.pack(expand=True, fill="both")
+
+        label = tk.Label(
+            frame,
+            text="Encryptions",
+            font=("Arial", 20, "bold")
+        )
+        label.pack(pady=40)
+
+        # Input field for message to encrypt
+        message_label = tk.Label(
+            frame,
+            text="Message to encrypt:",
+            font=("Arial", 12)
+        )
+        message_label.pack(anchor="w", padx=40)
+
+        self.encrypt_message_text = tk.Text(
+            frame,
+            height=8,
+            width=60
+        )
+        self.encrypt_message_text.pack(padx=40, pady=10, fill="x")
+
+        # Reusable return button
+        self.return_to_main_button = self._create_return_to_main_button()
+
+
+########## Decrypt view #####
+    def _show_decrypt_view(self) -> None:
+        self._clear_window()
+
+        frame = tk.Frame(self.root)
+        frame.pack(expand=True, fill="both")
+
+        label = tk.Label(
+            frame,
+            text="Decryption",
+            font=("Arial", 20, "bold")
+        )
+        label.pack(pady=40)
+
+        # Input field for message to decrypt
+        message_label = tk.Label(
+            frame,
+            text="Message to decrypt:",
+            font=("Arial", 12)
+        )
+        message_label.pack(anchor="w", padx=40)
+
+        self.decrypt_message_text = tk.Text(
+            frame,
+            height=8,
+            width=60
+        )
+        self.decrypt_message_text.pack(padx=40, pady=10, fill="x")
+
+        # Reusable return button
+        self.return_to_main_button = self._create_return_to_main_button()
 
 if __name__ == "__main__":
     root = tk.Tk()
